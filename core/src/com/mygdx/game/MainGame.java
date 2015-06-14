@@ -13,7 +13,7 @@ public class MainGame extends ApplicationAdapter {
     public static OrthographicCamera camera;
 	PolygonSpriteBatch batch;
     ShapeRenderer sr;
-    SimpleObject obj;
+//    SimpleObject obj;
     MouseInput input;
     float[] vertices;
     static OixelsGrid grid;
@@ -49,7 +49,7 @@ public class MainGame extends ApplicationAdapter {
         GameData.updatables.add(new InfoOutput("fps"));
         GameData.updatables.add(new InfoOutput("sumSpeedX"));
         GameData.updatables.add(new InfoOutput("sumSpeedY"));
-        GameData.disposables.add(obj);
+//        GameData.disposables.add(obj);
         GameData.disposables.add(sr);
         GameData.disposables.add(batch);
     }

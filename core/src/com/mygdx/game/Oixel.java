@@ -12,7 +12,6 @@ public class Oixel {
     static final int halfPhaseX = 100;
     static final int halfPhaseY = 100;
     public OixelsGrid grid;
-    int pushedX, pushedY;
     int x, y;
     int pX, pY;
     int phaseX, phaseY;
@@ -70,11 +69,6 @@ public class Oixel {
         pY -= 1;
     }
 
-    public void changeP(){
-        pY -= 1;
-
-    }
-
 
     public void checkP(){
         int dx = Utils.sign(pX);
@@ -113,9 +107,4 @@ public class Oixel {
                 pY = 0;
         }
     }
-
-    public void pushOut(){
-
-    }
-
 }
