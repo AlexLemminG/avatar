@@ -9,7 +9,6 @@ import java.util.NoSuchElementException;
  * Created by Alexander on 08.06.2015.
  */
 public class Oixel {
-    //sdfasdfas
     static final int halfPhaseX = 100;
     static final int halfPhaseY = 100;
     public OixelsGrid grid;

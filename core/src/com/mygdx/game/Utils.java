@@ -24,4 +24,12 @@ public class Utils {
     public static int minAbs(int a, int b){
         return Math.abs(a) <= Math.abs(b) ? a : b;
     }
+
+    public static double clip(double x, double a, double b){
+        return Math.min(Math.max(x, a), b);
+    }
+
+    public static boolean isInside(double x, double a, double b){
+        return x >= a && x <= b;
+    }
 }
