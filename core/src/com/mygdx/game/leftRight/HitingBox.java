@@ -6,9 +6,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 /**
  * Created by Alexander on 17.06.2015.
  */
-public class HitingBox {
+public class HitingBox implements Updatable, ShapeDrawable{
     float x, y;
-    float width = 50, height = 100;
+    float width = 0.5f, height = 0.5f;
     double timeCreated;
     boolean dead;
     private double lifeTime = 2;

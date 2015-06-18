@@ -30,7 +30,7 @@ public class ContactAdapter implements com.badlogic.gdx.physics.box2d.ContactLis
 
     @Override
     public void preSolve(Contact contact, Manifold oldManifold) {
-
+        contact.resetFriction();
     }
 
     @Override

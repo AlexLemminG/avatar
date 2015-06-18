@@ -22,32 +22,50 @@ public class LeftRight extends ApplicationAdapter {
     //    SimpleObject obj;
     Box2DDebugRenderer box2DDebugRenderer;
     InputAd input;
+    public LinkedList<Updatable>        updatables     ;
+    public LinkedList<ShapeDrawable>    shapeDrawables ;
 
-    LinkedList<Mob> mobs = new LinkedList<Mob>();
-    LinkedList<HitingBox> hitingBoxes = new LinkedList<HitingBox>();
-    public double time = 0;
+    LinkedList<Mob> mobs;
+    LinkedList<HitingBox> hitingBoxes;
+    public double time;
     Player player;
     World world;
+    Platform platform;
 
 
 
     @Override
     public void create() {
         super.create();
+        updatables = new LinkedList<Updatable>();
+        shapeDrawables = new LinkedList<ShapeDrawable>();
+        mobs = new LinkedList<Mob>();
+        hitingBoxes = new LinkedList<HitingBox>();
+        time = 0;
         instance = this;
         camera = new OrthographicCamera();
         sr = new ShapeRenderer();
-        box2DDebugRenderer = new Box2DDebugRenderer(true, true, true, true, true, true);
+        box2DDebugRenderer = new Box2DDebugRenderer(true, true, false, true, true, false);
 
-        world = new World(new Vector2(0, -10), false);
+        world = new World(new Vector2(0, -10), true);
+        world.setContinuousPhysics(false);
 
+        System.out.println(world.getAutoClearForces());
+        world.setAutoClearForces(true);
         double x = 1;
         for(int i = 0; i < 100; i++) {
-            x = x + 7.5 + Math.random() * 2.5;
+            x = x + 3.5 + Math.random() * 2.5;
             Mob mob = new Mob((float) x, 0);
             mobs.add(mob);
             mob.createBody(world);
+            shapeDrawables.add(mob);
+            updatables.add(mob);
         }
+
+        platform = new Platform(0, 2, 5, 0.2f);
+        platform.createBody(world);
+        updatables.add(platform);
+        shapeDrawables.add(platform);
 
         world.setContactFilter(new ContactFilter() {
             @Override
@@ -64,8 +82,11 @@ public class LeftRight extends ApplicationAdapter {
         world.setContactListener(new ContactAdapter());
         player = new Player(0, 0);
         input = new InputAd(player);
+        updatables.add(input);
         Gdx.input.setInputProcessor(input);
 
+        shapeDrawables.add(player);
+        updatables.add(player);
 
         player.createBody(world);
         {
@@ -76,6 +97,7 @@ public class LeftRight extends ApplicationAdapter {
             FixtureDef fixtureDef = new FixtureDef();
             fixtureDef.shape = groundShape;
             fixtureDef.density = 1;
+            fixtureDef.friction = 1;
             world.createBody(bodyDef).createFixture(fixtureDef);
         }
     }
@@ -94,40 +116,53 @@ public class LeftRight extends ApplicationAdapter {
         Gdx.gl.glClearColor(1,1,1,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-
         world.step(dt, 5, 10);
 
-        player.update(dt);
-        for(Mob mob : mobs){
-            mob.update(dt);
-        }
-        for(HitingBox hb : hitingBoxes){
-            hb.update(dt);
+        for(int i = 0; i < updatables.size(); i++){
+            updatables.get(i).update(dt);
         }
 
-        camera.zoom = 0.04f;
+        camera.zoom = 0.01f;
         camera.position.set(player.x, player.y, 0);
         camera.update();
         sr.setProjectionMatrix(camera.combined);
 
         sr.begin(ShapeRenderer.ShapeType.Filled);
-        player.render(sr);
-        for(Mob mob : mobs){
-            mob.render(sr);
-        }
-        for(HitingBox hb : hitingBoxes){
-            hb.render(sr);
+
+        for(ShapeDrawable sd : shapeDrawables){
+            sd.render(sr);
         }
         sr.setColor(Color.GRAY);
         sr.rect(-1000,-1000,2000,1000);
         sr.end();
         box2DDebugRenderer.render(world, camera.combined);
+        if(restart){
+            invokeRestart();
+        }
     }
+
+    boolean restart;
+
+
+
 
     @Override
     public void dispose() {
         super.dispose();
         world.dispose();
         sr.dispose();
+    }
+
+    public void invokeRestart(){
+        float w = camera.viewportWidth;
+        float h = camera.viewportHeight;
+        dispose();
+        create();
+        resize((int)w, (int)h);
+        restart = false;
+    }
+
+    public void restart(){
+        restart = true;
     }
 }

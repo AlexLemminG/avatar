@@ -19,6 +19,7 @@ public class FixtureFabric {
         fixtureDef.shape = shape;
         Fixture result = body.createFixture(fixtureDef);
         result.setUserData(sensor);
+        sensor.owner = result;
         return result;
     }
 }
