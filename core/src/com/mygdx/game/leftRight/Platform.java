@@ -42,7 +42,6 @@ public class Platform implements Updatable, ShapeDrawable{
 
     public void render(ShapeRenderer sr){
         sr.setColor(color);
-        System.out.println(body.getPosition());
         sr.rect(body.getPosition().x-width2, body.getPosition().y-height2, width, height);
     }
     public void update(float dt){

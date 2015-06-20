@@ -45,7 +45,7 @@ public class LeftRight extends ApplicationAdapter {
         instance = this;
         camera = new OrthographicCamera();
         sr = new ShapeRenderer();
-        box2DDebugRenderer = new Box2DDebugRenderer(true, true, false, true, true, false);
+        box2DDebugRenderer = new Box2DDebugRenderer(true, true, false, true, false, false);
 
         world = new World(new Vector2(0, -10), true);
         world.setContinuousPhysics(false);
@@ -62,10 +62,10 @@ public class LeftRight extends ApplicationAdapter {
             updatables.add(mob);
         }
 
-        platform = new Platform(0, 2, 5, 0.2f);
-        platform.createBody(world);
-        updatables.add(platform);
-        shapeDrawables.add(platform);
+//        platform = new Platform(0, 2, 5, 0.2f);
+//        platform.createBody(world);
+//        updatables.add(platform);
+//        shapeDrawables.add(platform);
 
         world.setContactFilter(new ContactFilter() {
             @Override
@@ -87,11 +87,19 @@ public class LeftRight extends ApplicationAdapter {
 
         shapeDrawables.add(player);
         updatables.add(player);
+        Graph g = new Graph(1,1);
+        updatables.add(g);
+        shapeDrawables.add(g);
+
+        Graph2 g2 = new Graph2(-1,1);
+        updatables.add(g2);
+        shapeDrawables.add(g2);
 
         player.createBody(world);
         {
             BodyDef bodyDef = new BodyDef();
             bodyDef.type = BodyDef.BodyType.StaticBody;
+            bodyDef.position.set(0,-0.95f);
             PolygonShape groundShape = new PolygonShape();
             groundShape.set(new float[]{-100, 0, 100, 0, 100, -2.5f, -100, -2.5f});
             FixtureDef fixtureDef = new FixtureDef();
@@ -122,7 +130,9 @@ public class LeftRight extends ApplicationAdapter {
             updatables.get(i).update(dt);
         }
 
-        camera.zoom = 0.01f;
+
+
+        camera.zoom = 0.015f;
         camera.position.set(player.x, player.y, 0);
         camera.update();
         sr.setProjectionMatrix(camera.combined);
@@ -133,7 +143,7 @@ public class LeftRight extends ApplicationAdapter {
             sd.render(sr);
         }
         sr.setColor(Color.GRAY);
-        sr.rect(-1000,-1000,2000,1000);
+//        sr.rect(-1000,-1000,2000,1000);
         sr.end();
         box2DDebugRenderer.render(world, camera.combined);
         if(restart){
