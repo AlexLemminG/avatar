@@ -12,7 +12,7 @@ import static com.mygdx.game.Utils.isInside;
 /**
  * Created by Alexander on 17.06.2015.
  */
-public class Mob implements Updatable, ShapeDrawable{
+public class Mob extends GObject implements Updatable, ShapeDrawable{
     float x, y;
     float MAX_SPEED = 3;
     float speed = 0;

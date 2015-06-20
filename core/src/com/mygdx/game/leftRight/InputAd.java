@@ -2,16 +2,17 @@ package com.mygdx.game.leftRight;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.InputProcessor;
 
 import java.util.LinkedList;
 
 /**
  * Created by Alexander on 17.06.2015.
  */
-public class InputAd extends InputAdapter implements Updatable{
+public class InputAd extends GObject implements Updatable, InputProcessor{
     final int LEFT = -1;
     final int RIGHT = -2;
+    ObjectSet os = LeftRight.instance.os;
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
@@ -19,16 +20,31 @@ public class InputAd extends InputAdapter implements Updatable{
             keyUp(LEFT);
         else
             keyUp(RIGHT);
-        return super.touchUp(screenX, screenY, pointer, button);
+        return true;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        return false;
+    }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        return false;
+    }
+
+    @Override
+    public boolean scrolled(int amount) {
+        return false;
     }
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if(screenX < Gdx.graphics.getWidth() / 2)
+        if (screenX < Gdx.graphics.getWidth() / 2)
             keyDown(LEFT);
         else
             keyDown(RIGHT);
-        return super.touchDown(screenX, screenY, pointer, button);
+        return true;
     }
 
     public InputAd(Player player) {
@@ -40,14 +56,19 @@ public class InputAd extends InputAdapter implements Updatable{
     @Override
     public boolean keyUp(int keycode) {
         pressed.remove(Integer.valueOf(keycode));
-        return super.keyUp(keycode);
+        return true;
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
+        return false;
     }
 
     LinkedList<Integer> pressed = new LinkedList<Integer>();
     @Override
     public boolean keyDown(int keycode) {
         pressed.add(keycode);
-        return super.keyDown(keycode);
+        return true;
     }
     int temp = 0;
     public void update(float dt){
@@ -56,8 +77,7 @@ public class InputAd extends InputAdapter implements Updatable{
             switch (keycode){
                 case Input.Keys.SPACE : {
                     HitingBox e = new HitingBox(player.x + player.width, player.y - player.height / 2, 0.2);
-                    LeftRight.instance.updatables.add(e);
-                    LeftRight.instance.shapeDrawables.add(e);
+                    os.put(e);
                 }break;
                 case LEFT:
                 case Input.Keys.A:{
@@ -82,15 +102,13 @@ public class InputAd extends InputAdapter implements Updatable{
         if(pressed.contains(LEFT) && pressed.contains(RIGHT)){
             LeftRight.instance.player.jump = true;
         }
-        if(pressed.contains(Input.Keys.O) && temp++==0){
+        if(pressed.contains(Input.Keys.O) && temp++ < 1){
 //            Rope rope = new Rope();
 //            rope.createBody(LeftRight.instance.world);
 //            LeftRight.instance.updatables.add(rope);
 //            LeftRight.instance.shapeDrawables.add(rope);
-            Graph p = new Graph(-5,5);
-            LeftRight.instance.updatables.add(p);
-            LeftRight.instance.shapeDrawables.add(p);
-
+//            VerletPoint p = new VerletPoint(0,5,LeftRight.instance.world);
+//            LeftRight.instance.updatables.add(p);
         }
     }
 }

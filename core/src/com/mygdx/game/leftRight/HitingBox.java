@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 /**
  * Created by Alexander on 17.06.2015.
  */
-public class HitingBox implements Updatable, ShapeDrawable{
+public class HitingBox extends GObject implements Updatable, ShapeDrawable{
     float x, y;
     float width = 0.5f, height = 0.5f;
     double timeCreated;
@@ -41,4 +41,5 @@ public class HitingBox implements Updatable, ShapeDrawable{
         sr.setColor(Color.RED);
         sr.rect(x,y, width, height);
     }
+
 }

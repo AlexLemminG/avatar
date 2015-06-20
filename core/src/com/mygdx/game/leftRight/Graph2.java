@@ -6,9 +6,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 /**
  * Created by Alexander on 20.06.2015.
  */
-public class Graph2 implements Updatable, ShapeDrawable{
+public class Graph2 extends GObject implements Updatable, ShapeDrawable{
     int n;
-    VertletPoint[] points;
+    PhysPoint[] points;
     float[] x;
     float[] y;
     float[] dy;
@@ -26,13 +26,13 @@ public class Graph2 implements Updatable, ShapeDrawable{
         y = new float[n];
         dy = new float[n];
         dy2 = new float[n];
-        points = new VertletPoint[n];
+        points = new PhysPoint[n];
 
         for(int i = 0; i < n; i++){
             float t = 1f * i / (n-1);
             x[i] = b * t + a * (1-t);
             y[i] = 2-(float)Math.sin(x[i]); //+ LeftRight.instance.time);
-            points[i] = new VertletPoint(x[i],y[i], LeftRight.instance.world);
+            points[i] = new PhysPoint(x[i],y[i], LeftRight.instance.world);
         }
 
     }
@@ -129,4 +129,5 @@ public class Graph2 implements Updatable, ShapeDrawable{
         }
         return result;
     }
+
 }

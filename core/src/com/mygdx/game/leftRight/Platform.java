@@ -12,7 +12,7 @@ import com.badlogic.gdx.physics.box2d.World;
 /**
  * Created by Alexander on 19.06.2015.
  */
-public class Platform implements Updatable, ShapeDrawable{
+public class Platform extends GObject implements Updatable, ShapeDrawable{
     float x, y;
     float width2, height2;
     Color color = Color.GRAY;
@@ -40,6 +40,7 @@ public class Platform implements Updatable, ShapeDrawable{
         return body;
     }
 
+
     public void render(ShapeRenderer sr){
         sr.setColor(color);
         sr.rect(body.getPosition().x-width2, body.getPosition().y-height2, width, height);
@@ -48,4 +49,5 @@ public class Platform implements Updatable, ShapeDrawable{
         float wantedX = x + (float)Math.sin(LeftRight.instance.time / 2 * Math.PI);
         body.setLinearVelocity(wantedX - body.getPosition().x, 0);
     }
+
 }

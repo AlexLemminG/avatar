@@ -6,9 +6,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 /**
  * Created by Alexander on 20.06.2015.
  */
-public class Graph implements Updatable, ShapeDrawable{
+public class Graph extends GObject implements Updatable, ShapeDrawable{
     int n;
-    VertletPoint[] points;
+    PhysPoint[] points;
     float[] x;
     float[] y;
     float[] dy;
@@ -28,7 +28,7 @@ public class Graph implements Updatable, ShapeDrawable{
         dy = new float[n];
         etta = new float[n];
         dEtta = new float[n];
-        points = new VertletPoint[n];
+        points = new PhysPoint[n];
 
         for(int i = 0; i < n; i++){
             float t = 1f * i / (n-1);
@@ -38,7 +38,7 @@ public class Graph implements Updatable, ShapeDrawable{
             etta[i] = 1 / 10f + ((float) Math.cos(x[i]));
             etta[i]=0;
             y[i]=etta[i];
-            points[i] = new VertletPoint(x[i],y[i], LeftRight.instance.world);
+            points[i] = new PhysPoint(x[i],y[i], LeftRight.instance.world);
             y[i]=0;
 //            etta[i] = ((float) Math.sin(x[i]));
         }
@@ -85,7 +85,7 @@ public class Graph implements Updatable, ShapeDrawable{
     int t = 0;
     @Override
     public void update(float dt) {
-        int steps = 10;
+        int steps = 100;
         for (int i = 0; i < n; i++) {
             etta[i] = points[i].getPosition().y;
         }
@@ -105,8 +105,8 @@ public class Graph implements Updatable, ShapeDrawable{
         //            y[i]+=dy[i]*dt;
                 etta[i]+=dEtta[i]*dt;
             }
-            y[0] = 0;
-            y[n-1]=0;
+            y[0] = 0.5f;
+            y[n-1]= 0.5f;
         }
 
         for (int i = 0; i < n; i++) {

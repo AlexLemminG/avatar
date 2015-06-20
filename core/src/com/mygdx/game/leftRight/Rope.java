@@ -8,7 +8,7 @@ import com.badlogic.gdx.physics.box2d.*;
 /**
  * Created by Alexander on 20.06.2015.
  */
-public class Rope implements ShapeDrawable, Updatable{
+public class Rope extends GObject implements ShapeDrawable, Updatable{
     Body[] particles;
     @Override
     public void render(ShapeRenderer shapeRenderer) {
@@ -80,4 +80,5 @@ public class Rope implements ShapeDrawable, Updatable{
         }
 
     }
+
 }

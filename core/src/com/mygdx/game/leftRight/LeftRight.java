@@ -22,8 +22,10 @@ public class LeftRight extends ApplicationAdapter {
     //    SimpleObject obj;
     Box2DDebugRenderer box2DDebugRenderer;
     InputAd input;
-    public LinkedList<Updatable>        updatables     ;
-    public LinkedList<ShapeDrawable>    shapeDrawables ;
+//    public LinkedList<Updatable>        updatables     ;
+//    public LinkedList<ShapeDrawable>    shapeDrawables ;
+
+    public ObjectSet os;
 
     LinkedList<Mob> mobs;
     LinkedList<HitingBox> hitingBoxes;
@@ -37,8 +39,9 @@ public class LeftRight extends ApplicationAdapter {
     @Override
     public void create() {
         super.create();
-        updatables = new LinkedList<Updatable>();
-        shapeDrawables = new LinkedList<ShapeDrawable>();
+        os = new ObjectSet();
+//        updatables = new LinkedList<Updatable>();
+//        shapeDrawables = new LinkedList<ShapeDrawable>();
         mobs = new LinkedList<Mob>();
         hitingBoxes = new LinkedList<HitingBox>();
         time = 0;
@@ -58,8 +61,9 @@ public class LeftRight extends ApplicationAdapter {
             Mob mob = new Mob((float) x, 0);
             mobs.add(mob);
             mob.createBody(world);
-            shapeDrawables.add(mob);
-            updatables.add(mob);
+//            shapeDrawables.add(mob);
+//            updatables.add(mob);
+            os.put(mob);
         }
 
 //        platform = new Platform(0, 2, 5, 0.2f);
@@ -82,18 +86,22 @@ public class LeftRight extends ApplicationAdapter {
         world.setContactListener(new ContactAdapter());
         player = new Player(0, 0);
         input = new InputAd(player);
-        updatables.add(input);
+        os.put(input);
+//        updatables.add(input);
         Gdx.input.setInputProcessor(input);
 
-        shapeDrawables.add(player);
-        updatables.add(player);
+        os.put(player);
+//        shapeDrawables.add(player);
+//        updatables.add(player);
         Graph g = new Graph(1,1);
-        updatables.add(g);
-        shapeDrawables.add(g);
+        os.put(g);
+//        updatables.add(g);
+//        shapeDrawables.add(g);
 
         Graph2 g2 = new Graph2(-1,1);
-        updatables.add(g2);
-        shapeDrawables.add(g2);
+        os.put(g2);
+//        updatables.add(g2);
+//        shapeDrawables.add(g2);
 
         player.createBody(world);
         {
@@ -126,9 +134,10 @@ public class LeftRight extends ApplicationAdapter {
 
         world.step(dt, 5, 10);
 
-        for(int i = 0; i < updatables.size(); i++){
-            updatables.get(i).update(dt);
-        }
+//        for(int i = 0; i < updatables.size(); i++){
+//            updatables.get(i).update(dt);
+//        }
+        os.update(dt);
 
 
 
@@ -139,9 +148,11 @@ public class LeftRight extends ApplicationAdapter {
 
         sr.begin(ShapeRenderer.ShapeType.Filled);
 
-        for(ShapeDrawable sd : shapeDrawables){
-            sd.render(sr);
-        }
+//        for(ShapeDrawable sd : shapeDrawables){
+//            sd.render(sr);
+//        }
+        os.render(sr);
+
         sr.setColor(Color.GRAY);
 //        sr.rect(-1000,-1000,2000,1000);
         sr.end();

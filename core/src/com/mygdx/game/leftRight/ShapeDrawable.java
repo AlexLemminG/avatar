@@ -5,6 +5,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 /**
  * Created by Alexander on 19.06.2015.
  */
-public interface ShapeDrawable {
+public interface ShapeDrawable extends GOInterface{
     public void render(ShapeRenderer shapeRenderer);
 }
