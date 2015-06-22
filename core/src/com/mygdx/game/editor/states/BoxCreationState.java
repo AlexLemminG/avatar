@@ -1,6 +1,6 @@
 package com.mygdx.game.editor.states;
 
-import com.mygdx.game.editor.Box;
+import com.mygdx.game.editor.SimpleBox;
 import com.mygdx.game.editor.Consts;
 import com.mygdx.game.editor.State;
 import com.mygdx.game.editor.editorActions.CreateAction;
@@ -15,7 +15,7 @@ public class BoxCreationState extends State{
     @Override
     public void touchDown(float x, float y, int button) {
         super.touchDown(x, y, button);
-        action = new CreateAction(new Box(x,y));
+        action = new CreateAction(new SimpleBox(x,y));
 //        action.doIt();
         Consts.input.doAction(action);
     }
