@@ -65,6 +65,7 @@ public class LeftRight extends ApplicationAdapter {
 //            updatables.add(mob);
             os.put(mob);
         }
+        new CurvyWall(0, 0, new com.mygdx.game.leftRight.geometry.PolygonShape(0, 0, 1, 1, 2, 1, 3, 1)).createBody(world);
 
 //        platform = new Platform(0, 2, 5, 0.2f);
 //        platform.createBody(world);

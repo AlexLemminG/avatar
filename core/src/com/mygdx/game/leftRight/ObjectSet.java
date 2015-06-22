@@ -13,15 +13,21 @@ public class ObjectSet {
     List<Updatable> updatables;
     List<ShapeDrawable> drawables;
     List<GObject> others;
+    List<GObject> toAdd;
 
     public ObjectSet(){
         updatables = new LinkedList<Updatable>();
         drawables = new LinkedList<ShapeDrawable>();
         others = new LinkedList<GObject>();
         toRemove = new LinkedList<GObject>();
+        toAdd = new LinkedList<GObject>();
     }
 
     public void put(GObject o){
+        toAdd.add(o);
+    }
+
+    public void actuallyPut(GObject o){
         if(o instanceof Updatable)
             updatables.add(((Updatable) o));
         if(o instanceof ShapeDrawable)
@@ -41,10 +47,16 @@ public class ObjectSet {
     }
 
     public void update(float dt){
+
         for(Updatable u : updatables){
             if(u.isActive())
                 u.update(dt);
         }
+        for(GObject r : toAdd){
+            actuallyPut(r);
+        }
+        toAdd.clear();
+
         for(GObject r : toRemove){
             actuallyRemove(r);
         }

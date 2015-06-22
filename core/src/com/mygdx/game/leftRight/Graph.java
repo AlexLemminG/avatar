@@ -22,7 +22,7 @@ public class Graph extends GObject implements Updatable, ShapeDrawable{
         b = -a;
         this.a = a;
         this.b = b;
-        n = 200;
+        n = 30;
         x = new float[n];
         y = new float[n];
         dy = new float[n];
@@ -85,7 +85,7 @@ public class Graph extends GObject implements Updatable, ShapeDrawable{
     int t = 0;
     @Override
     public void update(float dt) {
-        int steps = 100;
+        int steps = 30;
         for (int i = 0; i < n; i++) {
             etta[i] = points[i].getPosition().y;
         }

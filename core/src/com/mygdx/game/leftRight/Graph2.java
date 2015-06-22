@@ -21,7 +21,7 @@ public class Graph2 extends GObject implements Updatable, ShapeDrawable{
         b = -a;
         this.a = a;
         this.b = b;
-        n = 100;
+        n = 10;
         x = new float[n];
         y = new float[n];
         dy = new float[n];

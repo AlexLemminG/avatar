@@ -7,12 +7,16 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.game.leftRight.physics.sensors.FixtureFabric;
 import com.mygdx.game.leftRight.physics.sensors.OnGroundSensor;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import static com.mygdx.game.Utils.isInside;
 
 /**
  * Created by Alexander on 17.06.2015.
  */
-public class Mob extends GObject implements Updatable, ShapeDrawable{
+@XmlRootElement
+public class Mob extends GObject implements Updatable, ShapeDrawable, CanCreateBody{
     float x, y;
     float MAX_SPEED = 3;
     float speed = 0;
@@ -21,6 +25,7 @@ public class Mob extends GObject implements Updatable, ShapeDrawable{
     float height = 1f;
     float width2 = width / 2;
     float height2 = height / 2;
+
     Body body;
     boolean jump = false;
     OnGroundSensor sensor;
@@ -30,12 +35,28 @@ public class Mob extends GObject implements Updatable, ShapeDrawable{
     float friction = 1f;
     boolean onGround = false;
 
+    private Mob(){}
+
     public Mob(float x, float y) {
         this.x = x;
         this.y = y;
     }
 
+    public float getX() {
+        return x;
+    }
 
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public void setY(float y) {
+        this.y = y;
+    }
 
     public void update(float dt){
         if(sensor.isOnGround() != onGround){
@@ -107,11 +128,13 @@ public class Mob extends GObject implements Updatable, ShapeDrawable{
         return dead;
     }
 
+    @XmlElement(required = false)
     public void setDead(boolean dead) {
-        if(!this.dead) {
+
+        if(!this.dead && dead) {
             jump = true;
-            for(Fixture f : body.getFixtureList())
-                f.setSensor(true);
+//            for(Fixture f : body.getFixtureList())
+//                f.setSensor(true);
         }
         this.dead = dead;
     }
