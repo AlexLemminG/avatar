@@ -32,6 +32,8 @@ public class Editor extends ApplicationAdapter{
         super.render();
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        level.world.step(1f/60, 3,5);
+
 
         level.os.update(1);
 
@@ -74,7 +76,7 @@ public class Editor extends ApplicationAdapter{
         Gdx.input.setInputProcessor(input);
         Consts.level = level;
         Consts.input = input;
-        Consts.level.world = new World(new Vector2(0,10), true);
+        Consts.level.world = new World(new Vector2(0,-10), true);
         debugRenderer = new Box2DDebugRenderer(true, false, false, true, true, false);
 
         Table table = new Table(skin);

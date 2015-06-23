@@ -14,6 +14,22 @@ import java.util.LinkedList;
 public class Curve extends GObject implements ShapeDrawable{
     public LinkedList<Vector2> localPoints = new LinkedList<Vector2>();
 
+    public boolean add(Vector2 point){
+        point = point.cpy().sub(getPos());
+        if(localPoints.isEmpty() || !localPoints.getLast().epsilonEquals(point, 0.01f)) {
+            localPoints.add(point);
+            return true;
+        }else return false;
+
+    }
+
+    public Curve(float... xy) {
+        super();
+        for(int i = 0; i < xy.length / 2; i++){
+            localPoints.add(new Vector2(xy[i*2], xy[i*2 + 1]));
+        }
+    }
+
     @Override
     public void render(ShapeRenderer shapeRenderer) {
         float[] vertices = new float[localPoints.size()*2];

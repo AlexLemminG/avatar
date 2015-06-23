@@ -5,15 +5,16 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.editor.editorActions.EditorAction;
+import com.mygdx.game.editor.states.BoxCreationState;
 import com.mygdx.game.editor.states.CurveDrawingState;
+import com.mygdx.game.editor.states.CurveEditingState;
 import com.mygdx.game.editor.states.GObjectDraggingState;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import static com.badlogic.gdx.Input.Keys.M;
-import static com.badlogic.gdx.Input.Keys.P;
-import static com.badlogic.gdx.Input.Keys.Z;
+import static com.badlogic.gdx.Input.Keys.*;
+
 /**
  * Created by Alexander on 23.06.2015.
  */
@@ -75,6 +76,12 @@ public class InputListener extends InputAdapter{
         }
         if(keycode == P){
             setState(new CurveDrawingState());
+        }
+        if(keycode == O){
+            setState(new CurveEditingState());
+        }
+        if(keycode == B){
+            setState(new BoxCreationState());
         }
         return super.keyDown(keycode);
     }

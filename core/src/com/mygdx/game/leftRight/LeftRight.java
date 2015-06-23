@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.mygdx.game.editor.Curve;
 import com.mygdx.game.leftRight.physics.ContactAdapter;
 
 import java.util.LinkedList;
@@ -65,7 +66,7 @@ public class LeftRight extends ApplicationAdapter {
 //            updatables.add(mob);
             os.put(mob);
         }
-        new CurvyWall(0, 0, new com.mygdx.game.leftRight.geometry.PolygonShape(0, 0, 1, 1, 2, 1, 3, 1)).createBody(world);
+        new CurvyWall(0, 0, new Curve(0, 0, 1, 1, 2, 1, 3, 1)).createBody(world);
 
 //        platform = new Platform(0, 2, 5, 0.2f);
 //        platform.createBody(world);

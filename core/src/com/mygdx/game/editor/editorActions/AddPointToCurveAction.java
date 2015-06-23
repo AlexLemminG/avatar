@@ -8,23 +8,27 @@ import com.mygdx.game.editor.Curve;
  */
 public class AddPointToCurveAction extends EditorAction{
     Curve curve;
+    int lastAddedIndex = -1;
+    boolean added = false;
 
     public final Vector2 point;
 
     public AddPointToCurveAction(Curve curve, Vector2 point) {
         this.curve = curve;
-        this.point = point.sub(curve.getPos());
+        this.point = point;
     }
 
     @Override
     public void doIt() {
         super.doIt();
-        curve.localPoints.add(point);
+        added = curve.add(point);
+        lastAddedIndex = curve.localPoints.size()-1;
     }
 
     @Override
     public void undo() {
         super.undo();
-        curve.localPoints.remove(point);
+        if(added)
+            curve.localPoints.remove(lastAddedIndex);
     }
 }
