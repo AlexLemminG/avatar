@@ -5,6 +5,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -22,6 +25,7 @@ public class Editor extends ApplicationAdapter{
     OrthographicCamera camera;
     Level level;
     ShapeRenderer sr;
+    Box2DDebugRenderer debugRenderer;
 
     @Override
     public void render() {
@@ -40,6 +44,8 @@ public class Editor extends ApplicationAdapter{
         sr.begin(ShapeRenderer.ShapeType.Filled);
         level.os.render(sr);
         sr.end();
+
+        debugRenderer.render(Consts.level.world, camera.combined);
 
     }
 
@@ -68,6 +74,8 @@ public class Editor extends ApplicationAdapter{
         Gdx.input.setInputProcessor(input);
         Consts.level = level;
         Consts.input = input;
+        Consts.level.world = new World(new Vector2(0,10), true);
+        debugRenderer = new Box2DDebugRenderer(true, false, false, true, true, false);
 
         Table table = new Table(skin);
         stage.addActor(table);

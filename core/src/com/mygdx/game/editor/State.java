@@ -16,4 +16,10 @@ public class State {
     public void touchDown(float x, float y, int button) {
 
     }
+
+    public void update(float dt){}
+
+    public void mouseMoved(float x, float y) {
+
+    }
 }

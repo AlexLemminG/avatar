@@ -174,4 +174,9 @@ public class Mob extends GObject implements Updatable, ShapeDrawable, CanCreateB
         this.body = body;
         return body;
     }
+
+    @Override
+    public Body getBody() {
+        return body;
+    }
 }

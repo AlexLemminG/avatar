@@ -2,12 +2,17 @@ package com.mygdx.game.editor;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.editor.editorActions.EditorAction;
+import com.mygdx.game.editor.states.CurveDrawingState;
+import com.mygdx.game.editor.states.GObjectDraggingState;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import static com.badlogic.gdx.Input.Keys.M;
+import static com.badlogic.gdx.Input.Keys.P;
 import static com.badlogic.gdx.Input.Keys.Z;
 /**
  * Created by Alexander on 23.06.2015.
@@ -16,7 +21,16 @@ public class InputListener extends InputAdapter{
     Level level;
     private State state;
     private LinkedList<Integer> keyDown = new LinkedList<Integer>();
-    ArrayList<EditorAction> actions = new ArrayList<EditorAction>();
+    public ArrayList<EditorAction> actions = new ArrayList<EditorAction>();
+    Vector2 pointerPos = new Vector2();
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        Vector3 temp = level.camera.unproject(new Vector3(screenX, screenY, 0));
+        pointerPos.set(temp.x, temp.y);
+        state.mouseMoved(pointerPos.x, pointerPos.y);
+        return super.mouseMoved(screenX, screenY);
+    }
 
     int lastDoneAction = 0;
     public void undo(){
@@ -55,6 +69,12 @@ public class InputListener extends InputAdapter{
         }else
         if(keycode == Z && keyDown.contains(Input.Keys.CONTROL_LEFT)){
             undo();
+        }
+        if(keycode == M){
+            setState(new GObjectDraggingState());
+        }
+        if(keycode == P){
+            setState(new CurveDrawingState());
         }
         return super.keyDown(keycode);
     }

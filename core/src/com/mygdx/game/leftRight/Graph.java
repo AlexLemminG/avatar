@@ -49,9 +49,6 @@ public class Graph extends GObject implements Updatable, ShapeDrawable{
 
     @Override
     public void render(ShapeRenderer shapeRenderer) {
-//        for (int i = 0; i < n; i++) {
-//            y[i] = points[i].getPosition().y;
-//        }
         shapeRenderer.setColor(Color.BLACK);
         float[] temp = y;
         y = etta;

@@ -51,7 +51,7 @@ public class Rope extends GObject implements ShapeDrawable, Updatable{
             float y = b.getPosition().y;
             float x = i/10f-20;
             b.setTransform(x,y,0);
-//            b.applyForceToCenter(0, -(V-vMust)*10, true);
+//            body.applyForceToCenter(0, -(V-vMust)*10, true);
             b.applyForceToCenter(0, -(y-yMust)*100, true);
             b.applyForceToCenter(b.getLinearVelocity().cpy().scl(-1f),true);
         }

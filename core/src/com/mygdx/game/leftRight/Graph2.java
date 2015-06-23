@@ -79,14 +79,14 @@ public class Graph2 extends GObject implements Updatable, ShapeDrawable{
 //                System.out.println((y[i] - 3) + " " + (dy[i]));
 
 //            dy[i] = ((float) Math.cos(x[i]));
-//            points[i].setVelocity(0, dy[i]);
+//            localPoints[i].setVelocity(0, dy[i]);
             }
             if (t++ > 0)
                 for (int i = 0; i < n; i++) {
                     dy[i] += dt / steps * dy2[i];
                     y[i]+=dt/steps*dy[i];
 //            y[i] = dydx2(i);
-//            points[i].body.applyForceToCenter(0, -y[i]*points[i].body.getMass(),true);
+//            localPoints[i].body.applyForceToCenter(0, -y[i]*localPoints[i].body.getMass(),true);
                 }
             y[0] = 2;
             y[n - 1] = 2;

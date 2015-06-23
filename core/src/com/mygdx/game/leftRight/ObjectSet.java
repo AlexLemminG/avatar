@@ -11,7 +11,8 @@ import java.util.List;
 public class ObjectSet {
     List<GObject> toRemove;
     List<Updatable> updatables;
-    List<ShapeDrawable> drawables;
+    public List<ShapeDrawable> drawables;
+    public List<GObject> allGObjects;
     List<GObject> others;
     List<GObject> toAdd;
 
@@ -21,6 +22,7 @@ public class ObjectSet {
         others = new LinkedList<GObject>();
         toRemove = new LinkedList<GObject>();
         toAdd = new LinkedList<GObject>();
+        allGObjects = new LinkedList<GObject>();
     }
 
     public void put(GObject o){
@@ -32,6 +34,7 @@ public class ObjectSet {
             updatables.add(((Updatable) o));
         if(o instanceof ShapeDrawable)
             drawables.add(((ShapeDrawable) o));
+        allGObjects.add(o);
     }
 
     public void remove(GObject o){
@@ -44,6 +47,7 @@ public class ObjectSet {
             updatables.remove(o);
         if(o instanceof ShapeDrawable)
             drawables.remove(o);
+        allGObjects.remove(o);
     }
 
     public void update(float dt){

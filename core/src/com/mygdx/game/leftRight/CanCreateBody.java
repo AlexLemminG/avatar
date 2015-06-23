@@ -8,4 +8,5 @@ import com.badlogic.gdx.physics.box2d.World;
  */
 public interface CanCreateBody {
     public Body createBody(World world);
+    public Body getBody();
 }
