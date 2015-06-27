@@ -32,4 +32,13 @@ public class GObject implements GOInterface{
     public Vector2 getPos() {
         return pos;
     }
+
+    public void setPos(float x, float y) {
+        this.pos.set(x,y);
+        if(this instanceof CanCreateBody){
+            Body body = ((CanCreateBody) this).getBody();
+            if(body != null)
+                body.setTransform(x,y, body.getAngle());
+        }
+    }
 }

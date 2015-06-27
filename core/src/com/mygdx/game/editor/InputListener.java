@@ -5,10 +5,7 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.editor.editorActions.EditorAction;
-import com.mygdx.game.editor.states.BoxCreationState;
-import com.mygdx.game.editor.states.CurveDrawingState;
-import com.mygdx.game.editor.states.CurveEditingState;
-import com.mygdx.game.editor.states.GObjectDraggingState;
+import com.mygdx.game.editor.states.*;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -82,6 +79,9 @@ public class InputListener extends InputAdapter{
         }
         if(keycode == B){
             setState(new BoxCreationState());
+        }
+        if(keycode == N){
+            setState(new NormalToSplineTestState());
         }
         return super.keyDown(keycode);
     }

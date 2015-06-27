@@ -14,6 +14,8 @@ import com.mygdx.game.leftRight.geometry.PolygonShape;
  */
 public class CurvyWall extends GObject implements CanCreateBody{
     public Curve initShape;
+    public CatmullRomSpline<Vector2> spline;
+
 
     @Override
     public Body getBody() {
@@ -53,7 +55,7 @@ public class CurvyWall extends GObject implements CanCreateBody{
             }
         }
 
-            CatmullRomSpline spline = new CatmullRomSpline(cPoints, false);
+        spline = new CatmullRomSpline<Vector2>(cPoints, false);
 
 
 //        BSpline<Vector2> spline = new BSpline<Vector2>(cPoints, 3, false);

@@ -32,9 +32,10 @@ public class SimpleBox extends GObject implements ShapeDrawable, CanCreateBody
         BodyDef bDef = new BodyDef();
         bDef.type = BodyDef.BodyType.DynamicBody;
         bDef.position.set(getPos());
+        bDef.type = BodyDef.BodyType.KinematicBody;
         body = world.createBody(bDef);
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(50,50);
+        shape.setAsBox(0.5f,0.5f);
         body.createFixture(shape, 1);
         return null;
     }

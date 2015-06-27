@@ -13,7 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.mygdx.game.editor.states.BoxCreationState;
-import com.mygdx.game.leftRight.ObjectSet;
+import com.mygdx.game.izi.ObjectSet;
 
 /**
  * Created by Alexander on 21.06.2015.
