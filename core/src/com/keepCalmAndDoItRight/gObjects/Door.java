@@ -32,6 +32,9 @@ public class Door extends GObject{
     @Override
     public Body createBody(World world) {
         body =  super.createBody(world);
+        friction.setMaxForce(0);
+        friction.setMaxTorque(0);
+
         BodyDef st = new BodyDef();
         Body staticBody = world.createBody(st);
         RevoluteJointDef jDef = new RevoluteJointDef();
@@ -48,7 +51,7 @@ public class Door extends GObject{
 //        staticBody.setTransform(0, -1, 0);
         j = (RevoluteJoint) world.createJoint(jDef);
         body.getFixtureList().first().setFilterData(Wall.wallFilter);
-        body.getFixtureList().get(1).setFilterData(Wall.wallFilter);
+//        body.getFixtureList().get(1).setFilterData(Wall.wallFilter);
         return body;
     }
 }

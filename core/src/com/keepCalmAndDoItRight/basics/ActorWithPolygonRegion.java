@@ -77,8 +77,9 @@ public class ActorWithPolygonRegion extends Actor{
 //            originX = 0;
 //            originY = 0;
 
-            b.draw(polygonRegion, x, y, originX, originY, imageWidth * imageScaleX, imageHeight * imageScaleY, scaleX, scaleY, rotation);
             b.flush();
+//            b.enableBlending();
+            b.draw(polygonRegion, x, y, originX, originY, imageWidth * imageScaleX, imageHeight * imageScaleY, scaleX, scaleY, rotation);
 //                    ((TransformDrawable)drawable).draw(batch, x + imageX, y + imageY, getOriginX() - imageX, getOriginY() - imageY,
 //                            imageWidth, imageHeight, scaleX, scaleY, rotation);
         }

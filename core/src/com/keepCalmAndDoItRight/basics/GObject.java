@@ -1,13 +1,15 @@
 package com.keepCalmAndDoItRight.basics;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.PolygonRegion;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.joints.FrictionJoint;
+import com.badlogic.gdx.physics.box2d.joints.FrictionJointDef;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.ShortArray;
 import com.keepCalmAndDoItRight.GeometryUtils;
@@ -18,14 +20,15 @@ import com.keepCalmAndDoItRight.quick.GrUtils;
  */
 public class GObject implements Disposable{
     protected static DelaunayTriangulator triangulator = new DelaunayTriangulator();
+    public Array<Act> actions = new Array();
+    public FrictionJoint friction;
 
-    protected boolean hasBody;
-    private static Texture DEFAULT_TEXTURE = new Texture(Gdx.files.internal("badlogic.jpg"));
+    public boolean hasBody;
 
     protected Texture texture;
     protected Body body;
     protected Actor actor;
-    protected Level level;
+    public Level level;
 
     public GObject(Level level, Polygon polygon) {
         this(level);
@@ -56,6 +59,8 @@ public class GObject implements Disposable{
     }
     public void setBody(Body body) {
         this.body = body;
+        if (body == null)
+            hasBody = false;
     }
     public Actor getActor() {
         return actor;
@@ -70,7 +75,7 @@ public class GObject implements Disposable{
     }
 
     public void createTexture() {
-        setTexture(DEFAULT_TEXTURE);
+        setTexture(Assets.DEFAULT_TEXTURE);
     }
 
     public void update(float dt){
@@ -80,6 +85,9 @@ public class GObject implements Disposable{
             actor.setPosition(pos.x - actor.getOriginX(), pos.y - actor.getOriginY());
             actor.setRotation(angle);
         }
+        for(Act a : actions){
+            a.act();
+        }
     }
 
     public Body createBody(World world){
@@ -88,25 +96,39 @@ public class GObject implements Disposable{
         Body body = world.createBody(bDef);
         float[] vertices = polygon.getTransformedVertices();
         ShortArray s = triangulator.computeTriangles(vertices, true);
+        if(vertices.length > 16) {
+            for (int i = 0; i < s.size / 3; i++) {
+                FixtureDef fDef = new FixtureDef();
+                PolygonShape p = new PolygonShape();
+                int i1 = s.get(i * 3) * 2;
+                int i2 = s.get(i * 3 + 1) * 2;
+                int i3 = s.get(i * 3 + 2) * 2;
 
-        for(int i = 0; i < s.size/3; i++) {
+                p.set(new float[]{
+                        vertices[i1], vertices[i1 + 1],
+                        vertices[i2], vertices[i2 + 1],
+                        vertices[i3], vertices[i3 + 1]
+                });
+                fDef.shape = p;
+                fDef.isSensor = false;
+                fDef.density = 1f;
+                body.createFixture(fDef);
+            }
+        }else{
             FixtureDef fDef = new FixtureDef();
-            PolygonShape p = new PolygonShape();
-            int i1 = s.get(i*3)*2;
-            int i2 = s.get(i*3+1)*2;
-            int i3 = s.get(i*3+2)*2;
-
-            p.set(new float[]{
-                    vertices[i1], vertices[i1+1],
-                    vertices[i2], vertices[i2+1],
-                    vertices[i3], vertices[i3+1]
-            });
+            PolygonShape p = GeometryUtils.polygonToBox2dPolygon(polygon);
             fDef.shape = p;
             fDef.isSensor = false;
             fDef.density = 1f;
             body.createFixture(fDef);
         }
         body.setUserData(this);
+        FrictionJointDef f = new FrictionJointDef();
+        f.maxForce = 10f;
+        f.maxTorque = 1f;
+        f.initialize(body, level.superStone, new Vector2());
+        friction = ((FrictionJoint) world.createJoint(f));
+
         setBody(body);
         return body;
     }
@@ -148,7 +170,6 @@ public class GObject implements Disposable{
             float maxy = b.getHeight() + miny;
             actor.setSize(b.getWidth(), b.getHeight());
             Vector2 origin = new Vector2((maxx + minx) / 2, (maxy + miny) / 2);
-
             actor.setOrigin(actor.getWidth() / 2 - origin.x, actor.getHeight() / 2 - origin.y);
         }
         stage.addActor(actor);
@@ -164,5 +185,29 @@ public class GObject implements Disposable{
 
     public void setTexture(Texture texture) {
         this.texture = texture;
+    }
+
+    public Body createBody(World world, Shape... shapes) {
+        BodyDef bDef = new BodyDef();
+        bDef.type = BodyDef.BodyType.DynamicBody;
+        Body body = world.createBody(bDef);
+        for(Shape shape : shapes) {
+            FixtureDef fDef = new FixtureDef();
+            fDef.shape = shape;
+            fDef.isSensor = false;
+            fDef.density = 1f;
+            body.createFixture(fDef);
+
+        }
+        body.setUserData(this);
+        FrictionJointDef f = new FrictionJointDef();
+        f.maxForce = 10f;
+        f.maxTorque = 1f;
+        f.initialize(body, level.superStone, new Vector2());
+        friction = ((FrictionJoint) world.createJoint(f));
+
+        setBody(body);
+        return body;
+
     }
 }

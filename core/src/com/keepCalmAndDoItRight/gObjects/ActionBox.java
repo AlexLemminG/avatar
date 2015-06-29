@@ -12,7 +12,7 @@ import com.keepCalmAndDoItRight.quick.ShapesCreator;
 /**
  * Created by Alexander on 27.06.2015.
  */
-public class ActionBox implements ReactToContacts {
+public class ActionBox  implements ReactToContacts{
     private Fixture fixture;
 
     public FixtureDef getFixtureDef(){

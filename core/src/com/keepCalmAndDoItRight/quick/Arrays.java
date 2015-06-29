@@ -11,4 +11,12 @@ public class Arrays {
         }
         return result;
     }
+
+    public static short[] copy(short[] orig, int size){
+        short[] result = new short[size];
+        for(int i = 0; i < size; i++){
+            result[i] = orig[i];
+        }
+        return result;
+    }
 }

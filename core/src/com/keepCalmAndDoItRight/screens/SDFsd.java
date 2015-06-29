@@ -1,27 +1,21 @@
 package com.keepCalmAndDoItRight.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.FPSLogger;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.PolygonRegion;
 import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.keepCalmAndDoItRight.GeometryUtils;
 import com.keepCalmAndDoItRight.basics.Level;
 import com.keepCalmAndDoItRight.basics.View;
+import com.keepCalmAndDoItRight.controllers.PlayerController;
+import com.keepCalmAndDoItRight.controllers.UIController;
+import com.keepCalmAndDoItRight.gObjects.Bullet;
 import com.keepCalmAndDoItRight.gObjects.Door;
 import com.keepCalmAndDoItRight.gObjects.Unit;
-import com.keepCalmAndDoItRight.gObjects.UnitControl;
 import com.keepCalmAndDoItRight.gObjects.Wall;
 
 /**
@@ -32,37 +26,38 @@ public class SDFsd extends ScreenAdapter {
     Stage stage;
     Level level;
     View view;
-    Texture tex = new Texture(Gdx.files.internal("unit.png"));
-    static{
-        FileHandle f = Gdx.files.internal("unit.png");
-        System.out.println(Gdx.files.getExternalStoragePath());
-        System.out.println(Gdx.files.getLocalStoragePath());
-        System.out.println(f.exists());
-        System.out.println("BEGIN__________________________________________________________________");
-        for(FileHandle ff : f.list()){
-            System.out.println(ff.name());
-        }
-        System.out.println("END__________________________________________________________________");
-    }
-    TextureRegion tr = new TextureRegion(tex);
-    {
-        tex.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+//    Texture tex = new Texture(Gdx.files.internal("unit.png"));
+//    static{
+//        FileHandle f = Gdx.files.internal("unit.png");
+//        System.out.println(Gdx.files.getExternalStoragePath());
+//        System.out.println(Gdx.files.getLocalStoragePath());
+//        System.out.println(f.exists());
+//        System.out.println("BEGIN__________________________________________________________________");
+//        for(FileHandle ff : f.list()){
+//            System.out.println(ff.name());
+//        }
+//        System.out.println("END__________________________________________________________________");
+//    }
+//    TextureRegion tr = new TextureRegion(tex);
+//    {
+//        tex.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
 //        tr.setRegion(0,0, 100, 100);
-    }
-    PolygonRegion sp = new PolygonRegion(tr, new float[]{0, 0, 500, 500, 500, 0}, new short[]{1, 2, 0});
+//    }
+//    PolygonRegion sp = new PolygonRegion(tr, new float[]{0, 0, 500, 500, 500, 0}, new short[]{1, 2, 0});
 
     @Override
     public void render(float delta) {
-
+        delta = 1f/60;
+        delta = Gdx.graphics.getDeltaTime();
         level.update(delta);
         Vector2 newUp = new Vector2(0, 1).rotateRad(player.getBody().getAngle());
-        float scalar = 0.1f;
+        float scalar = delta*10;
         Vector2 newUpDelta = newUp.sub(view.camera.up.x, view.camera.up.y).scl(scalar);
         Vector2 newPos = player.getBody().getPosition();
         Vector2 newPosDelta = newPos.sub(view.camera.position.x, view.camera.position.y).scl(scalar);
-
+//
         view.camera.position.add(newPosDelta.x, newPosDelta.y, 0);
-        view.camera.up.add(newUpDelta.x, newUpDelta.y, 0);
+//        view.camera.up.add(newUpDelta.x, newUpDelta.y, 0);
         view.camera.normalizeUp();
 
 
@@ -120,12 +115,17 @@ public class SDFsd extends ScreenAdapter {
                 0, -3,
                 0, -1
         });
-        new Wall(level, wall, 0.1f, false);
+        new Wall(level, wall, 0.3f, false);
+//        new Wall(level, new Polygon(new float[]{
+//                -10, 6,
+//                -5, 1,
+//                -4, 0
+//        }), 1, false);
         new Door(level, GeometryUtils.boxPolygon(0.05f, 1f));
+        new Bullet(level);
         player = new Unit(level);
         player.getBody().setTransform(0, 5, 0);
         player.getBody().setFixedRotation(true);
-
 
         for(int i = 0; i < 10; i++) {
             Unit box = new Unit(level);
@@ -147,55 +147,10 @@ public class SDFsd extends ScreenAdapter {
             box.getBody().setLinearVelocity(vx, vy);
             box.activate();
         }
-        stage.addListener(new InputListener() {
-            @Override
-            public boolean keyUp(InputEvent event, int keycode) {
-                if(keycode == Input.Keys.W){
-                    player.control.removeAction(UnitControl.MOVE_FORWARD);
-                }
-                if(keycode == Input.Keys.S){
-                    player.control.removeAction(UnitControl.MOVE_BACKWARD);
-                }
-                if(keycode == Input.Keys.D){
-                    player.control.removeAction(UnitControl.ROTATE_CLOCKWISE);
-                }
-                if(keycode == Input.Keys.A){
-                    player.control.removeAction(UnitControl.ROTATE_COUNTER_CLOCKWISE);
-                }
-                if(keycode == Input.Keys.SPACE){
-                    player.control.removeAction(UnitControl.ACTIVATE);
-                }
-                return super.keyUp(event, keycode);
-            }
 
-            @Override
-            public boolean keyDown(InputEvent event, int keycode) {
-                if(keycode == Input.Keys.W){
-                    player.control.addAction(UnitControl.MOVE_FORWARD);
-                }
-                if(keycode == Input.Keys.S){
-                    player.control.addAction(UnitControl.MOVE_BACKWARD);
-                }
-                if(keycode == Input.Keys.D){
-                    player.control.addAction(UnitControl.ROTATE_CLOCKWISE);
-                }
-                if(keycode == Input.Keys.A){
-                    player.control.addAction(UnitControl.ROTATE_COUNTER_CLOCKWISE);
-                }
-                if(keycode == Input.Keys.SPACE){
-                    player.control.addAction(UnitControl.ACTIVATE);
-                }
-                return super.keyDown(event, keycode);
-            }
-
-            @Override
-            public boolean mouseMoved(InputEvent event, float x, float y) {
-                Vector3 v = view.camera.unproject(new Vector3(x,y,0));
-                Gdx.graphics.setTitle(x + " " + y);
-                return super.mouseMoved(event, x, y);
-            }
-        });
-
+        stage.addListener(new PlayerController(player));
+        stage.addListener(new UIController(view));
+        Gdx.graphics.setTitle("ASDWF_SPACE_F1_LEFTMOUSE");
 
     }
 }

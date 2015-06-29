@@ -44,8 +44,8 @@ public class GrUtils {
         p.setOrigin(minx, miny);
         p.setPosition(-minx, -miny);
 //        p.setScale(scaleX, scaleY);
-        p.setScale(scaleX, scaleX);
-        PolygonRegion polygonRegion = new PolygonRegion(tr, Arrays.copy(p.getTransformedVertices()), triangles.items);
+        p.setScale(scaleX, scaleY);
+        PolygonRegion polygonRegion = new PolygonRegion(tr, Arrays.copy(p.getTransformedVertices()), Arrays.copy(triangles.items, triangles.size));
 
         p.setOrigin(origOX, origOY);
         p.setPosition(origX, origY);
@@ -70,24 +70,20 @@ public class GrUtils {
         Rectangle b = polygon.getBoundingRectangle();
 
         float minx = b.getX();
-        float maxx = minx + b.getWidth();
         float miny =  b.getY();
-        float maxy =  miny + b.getHeight();
-//        for(int i = 0; i < vertices.length / 2; i++){
-//            minx = Math.min(minx, vertices[i*2]);
-//            miny = Math.min(miny, vertices[i * 2 + 1]);
-//            maxx = Math.max(maxx, vertices[i * 2]);
-//            maxy = Math.max(maxy, vertices[i*2+1]);
-//        }
+
         float width = polygon.getBoundingRectangle().getWidth();
         float height = polygon.getBoundingRectangle().getHeight();
         float scaleX = tr.getRegionWidth() / width;
         float scaleY = tr.getRegionHeight() / height;
         p.setOrigin(minx, miny);
         p.setPosition(-minx, -miny);
-        p.setScale(scaleX, scaleY);
-//        p.setScale(scaleX, scaleX);
-        PolygonRegion polygonRegion = new PolygonRegion(tr, Arrays.copy(p.getTransformedVertices()), triangles.items);
+//        if(imageScaleX == 1/0f || imageScaleY == 1/0f)
+            p.setScale(scaleX, scaleY);
+//        else
+//            p.setScale(imageScaleX, imageScaleY);
+
+        PolygonRegion polygonRegion = new PolygonRegion(tr, Arrays.copy(p.getTransformedVertices()), Arrays.copy(triangles.items, triangles.size));
 
         p.setOrigin(origOX, origOY);
         p.setPosition(origX, origY);
