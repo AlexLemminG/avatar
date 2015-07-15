@@ -1,9 +1,9 @@
 package com.keepCalmAndDoItRight.gObjects;
 
-import com.keepCalmAndDoItRight.GeometryUtils;
-import com.keepCalmAndDoItRight.basics.Assets;
-import com.keepCalmAndDoItRight.basics.GObject;
-import com.keepCalmAndDoItRight.basics.Level;
+import com.badlogic.gdx.utils.Array;
+import com.keepCalmAndDoItRight.basics.*;
+import com.keepCalmAndDoItRight.quick.Consts;
+import com.keepCalmAndDoItRight.quick.GeometryUtils;
 
 /**
  * Created by Alexander on 28.06.2015.
@@ -30,33 +30,39 @@ public class Bullet extends GObject {
         setTexture(Assets.BULLET_TEXTURE);
     }
 
-    public Bullet(final Level level) {
+    public Bullet(final Level level, final Unit owner) {
         super(level);
-        timeDisableBullet = level.time + 0.5f;
+        timeDisableBullet = level.time + 0f;
         timeRemoveBullet = level.time + 3f;
-        setPolygon(GeometryUtils.boxPolygon(0.1f, 0.1f));
+        setPolygon(GeometryUtils.boxPolygon(0.05f, 0.05f));
         init();
-        friction.setMaxTorque(0.1f);
-        friction.setMaxForce(0.5f);
+        friction.setMaxTorque(0.0f);
+        friction.setMaxForce(0.0f);
         body.getFixtureList().first().setRestitution(0.03f);
         body.setBullet(true);
         final GObject t = this;
-        /*
+
         body.getFixtureList().first().setUserData(new ReactToContacts() {
-            Array<GObject> toched = new Array();
+            Array<GObject> toched = new Array<>();
             @Override
             public void touched(final GObject b) {
+                if(b instanceof Unit && ((Unit) b).unitType != owner.unitType)
                 if(!toched.contains(b, true)) {
                     t.actions.add(new Act() {
                         @Override
                         public void act() {
-//                            level.os.remove(b);
-                            level.os.remove(t);
+                            ((Unit) b).decreeseHP(40);
                         }
                     });
                     toched.add(b);
                 }
-//                body.getWorld().destroyBody(b.getBody());
+                if(!(b == owner))
+                t.actions.add(new Act() {
+                    @Override
+                    public void act() {
+                        level.os.remove(t);
+                    }
+                });
             }
 
             @Override
@@ -64,6 +70,6 @@ public class Bullet extends GObject {
                 toched.removeValue(b, true);
             }
         });
-        */
+        getBody().getFixtureList().first().setFilterData(Consts.BULLET_FILTER);
     }
 }

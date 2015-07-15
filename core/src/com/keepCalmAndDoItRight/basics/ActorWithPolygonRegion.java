@@ -5,13 +5,13 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.PolygonRegion;
 import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.utils.Scaling;
 
 /**
  * Created by Alexander on 26.06.2015.
  */
-public class ActorWithPolygonRegion extends Actor{
+public class ActorWithPolygonRegion extends Group{
 
     private PolygonRegion polygonRegion;
 
@@ -57,7 +57,6 @@ public class ActorWithPolygonRegion extends Actor{
             float y = getY();
             float scaleX = getScaleX();
             float scaleY = getScaleY();
-
             float rotation = getRotation();
             Scaling scaling = Scaling.stretch;
             float width = getWidth();
@@ -65,25 +64,14 @@ public class ActorWithPolygonRegion extends Actor{
             Vector2 size = scaling.apply(minW, minH, width, height);
             float imageWidth = size.x;
             float imageHeight = size.y;
-//            imageHeight = 1;
-//            imageWidth = 1;
-//            scaleX = 1;
-//            scaleY = 1;
-
             float originX = getOriginX();
             float originY = getOriginY();
-//            x = 0;
-//            y = 0;
-//            originX = 0;
-//            originY = 0;
 
             b.flush();
-//            b.enableBlending();
             b.draw(polygonRegion, x, y, originX, originY, imageWidth * imageScaleX, imageHeight * imageScaleY, scaleX, scaleY, rotation);
-//                    ((TransformDrawable)drawable).draw(batch, x + imageX, y + imageY, getOriginX() - imageX, getOriginY() - imageY,
-//                            imageWidth, imageHeight, scaleX, scaleY, rotation);
+            if(getDebug())
+                Assets.FONT.draw(b, getName() == null ? "↑" : "↑"+getName(), x, y);
         }
         super.draw(batch, parentAlpha * color.a);
-
     }
 }

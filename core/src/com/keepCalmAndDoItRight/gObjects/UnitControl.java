@@ -1,9 +1,12 @@
 package com.keepCalmAndDoItRight.gObjects;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.math.Vector3;
 import com.keepCalmAndDoItRight.basics.SimplePath;
+import com.keepCalmAndDoItRight.gObjects.weapons.Gun;
 
 /**
  * Created by Alexander on 27.06.2015.
@@ -22,18 +25,24 @@ public class UnitControl {
     public static final int GOTO_MOUSE = 256;
     public static final int LOOK_AT__MOUSE = 512;
     public static final int FOLLOW_PATH = 1024;
-    Unit unit;
-    float x;
-    float y;
+    public static final int FOLLOW_UNIT = 2048;
+    public static final int FOLLOW_DIRECTION = 4096;
+    public static final int LOOK_AT_MOVEMENT = 8192;
+    public Vector2 direction = new Vector2();
+    public Unit unit;
+    public float fireDelayTime = 0.1f;
+    Unit owner;
+    public float x;
+    public float y;
     public SimplePath path;
     private SimplePath lastPath;
     private float beginT;
-
-    public UnitControl(Unit unit) {
-        this.unit = unit;
+    public float timeNextBulletFired;
+    public UnitControl(Unit owner) {
+        this.owner = owner;
     }
 
-    float maxSpeed = 5;
+    public float maxSpeed = 5;
     float maxAngularSpeed = 3f;
     int currentAction;
     public void addAction(int action){
@@ -46,13 +55,19 @@ public class UnitControl {
     }
     Vector2 vel = new Vector2();
     public void update(){
+        mouseXY.set(Gdx.input.getX(), Gdx.input.getY());
+        temp3.set(mouseXY.x, mouseXY.y, 0);
+        temp3 = owner.level.view.camera.unproject(temp3);
+        x = temp3.x;
+        y = temp3.y;
+
         float speedY = 0;
         float speedX = 0;
         float aSpeed = 0;
 
         if((currentAction & GOTO_MOUSE) != 0){
-            speedX += x - unit.getBody().getPosition().x;
-            speedY += y - unit.getBody().getPosition().y;
+            speedX += x - owner.getBody().getPosition().x;
+            speedY += y - owner.getBody().getPosition().y;
         }
         if((currentAction & MOVE_FORWARD) != 0){
             speedY += maxSpeed;
@@ -73,29 +88,37 @@ public class UnitControl {
             aSpeed += maxAngularSpeed;
         }
         if((currentAction & ACTIVATE) != 0){
-            unit.actionBox.activate();
+            owner.actionBox.activate();
         }
-        if(((currentAction) & FIRE) != 0){
-            Bullet bullet = new Bullet(unit.level);
-            Body b = unit.getBody();
-            bullet.getBody().setTransform(b.getPosition().cpy().add(new Vector2(0, .3f).rotateRad(b.getAngle())), b.getAngle());
-            bullet.getBody().setLinearVelocity(new Vector2(0,50).rotateRad(b.getAngle()));
-//            currentAction ^= FIRE;
+        if((currentAction & LOOK_AT_MOVEMENT) != 0){
+            float dAngle = (vel.angleRad()- owner.getBody().getAngle() - MathUtils.PI/2);
+            while(dAngle > MathUtils.PI)
+                dAngle -= MathUtils.PI2;
+            while(dAngle < -MathUtils.PI)
+                dAngle += MathUtils.PI2;
+            aSpeed += dAngle * 10;
+        }
+
+        if(((currentAction) & FOLLOW_UNIT) != 0 && unit != null && unit.getBody() != null) {
+
+            speedX += unit.getBody().getPosition().x - owner.getBody().getPosition().x;
+            speedY += unit.getBody().getPosition().y - owner.getBody().getPosition().y;
         }
         if(((currentAction) & FOLLOW_PATH) != 0) {
             if(lastPath != path) {
-                t = unit.level.time;
+                t = owner.level.time;
                 beginT = t;
                 finalT = t + path.approxLength(100) / maxSpeed;
                 lastPath = path;
             }
-            t = (unit.level.time - beginT)/(finalT - beginT);
+            t = (owner.level.time - beginT)/(finalT - beginT);
+            t += 0.1 / (finalT - beginT);
             if(t > 1) {
                 t = 1;
             }
             Vector2 v = new Vector2();
             path.valueAt(v, t);
-//            unit.getBody().setTransform(v, unit.getBody().getAngle());
+//            owner.getBody().setTransform(v, owner.getBody().getAngle());
             if(t == 1) {
 //                removeAction(FOLLOW_PATH);
 //                finalT = 0;
@@ -103,8 +126,8 @@ public class UnitControl {
             float x = v.x;
             float y = v.y;
 
-            speedX += x - unit.getBody().getPosition().x;
-            speedY += y - unit.getBody().getPosition().y;
+            speedX += x - owner.getBody().getPosition().x;
+            speedY += y - owner.getBody().getPosition().y;
             v.set(speedX, speedY);
             if(v.len() > 0.1f)
                 v.setLength(maxSpeed);
@@ -113,41 +136,54 @@ public class UnitControl {
             speedX = v.x;
             speedY = v.y;
         }
-
+        if((currentAction & FOLLOW_DIRECTION) != 0){
+            speedX += direction.x;
+            speedY += direction.y;
+        }
 
             vel.set(speedX,speedY);
-//        .rotateRad(unit.getBody().getAngle());
+        //movement
         if(speedY != 0 || speedX != 0){
             float v = MathUtils.clamp(vel.len(), 0, maxSpeed);
             vel.setLength(v);
-            unit.getBody().setLinearVelocity(vel);
-            float dAngle = (vel.angleRad()-unit.getBody().getAngle() - MathUtils.PI/2);
-            while(dAngle > MathUtils.PI)
-                dAngle -= MathUtils.PI2;
-            while(dAngle < -MathUtils.PI)
-                dAngle += MathUtils.PI2;
-            aSpeed += dAngle * 10;
-        }
-//        if(vel.cpy().nor().dot(unit.getBody().getLinearVelocity()) < maxSpeed)
-//        unit.getBody().applyForceToCenter(vel, true);
+            owner.getBody().setLinearVelocity(vel);
 
+        }
+        Vector2 direction2 = null;
         if((currentAction & LOOK_AT__MOUSE) != 0){
             aSpeed = 0;
-            Vector2 direction = new Vector2(x - unit.getBody().getPosition().x, y - unit.getBody().getPosition().y);
-            float dAngle = (direction.angleRad()-unit.getBody().getAngle() - MathUtils.PI/2);
+            direction2 = new Vector2(x - owner.getBody().getPosition().x, y - owner.getBody().getPosition().y);
+            float dAngle = (direction.angleRad()- owner.getBody().getAngle() - MathUtils.PI/2);
             while(dAngle > MathUtils.PI)
                 dAngle -= MathUtils.PI2;
             while(dAngle < -MathUtils.PI)
                 dAngle += MathUtils.PI2;
             aSpeed += dAngle * 10;
         }
+        if(direction2 == null)
+            owner.getBody().setAngularVelocity(aSpeed);
+        else
+            owner.getBody().setTransform(owner.getBody().getPosition(), direction2.angleRad() - MathUtils.PI/2);
 
-        unit.getBody().setAngularVelocity(aSpeed);
+        Gun g = ((Gun) owner.items.getOne("Gun"));
+        if(g != null)
+            g.setFire(((currentAction) & FIRE) != 0);
     }
-
+    Vector2 mouseXY = new Vector2();
+    private Vector3 temp3 = new Vector3();
     public void addAction(int action, float x, float y) {
         this.x = x;
         this.y = y;
+        temp3.set(x, y, 0);
+        temp3.set(owner.level.view.camera.project(temp3));
+        mouseXY.set(temp3.x, temp3.y);
         addAction(action);
+    }
+
+    public void render(ShapeRenderer sr){
+        sr.begin(ShapeRenderer.ShapeType.Line);
+        if(path != null)
+            sr.polyline(path.getVertices());
+        sr.end();
     }
 }

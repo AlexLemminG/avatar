@@ -31,7 +31,7 @@ public class PlayerController extends InputListener{
 //        mouseBind.put(Input.Buttons.RIGHT, FOLLOW_PATH);
     }
 
-
+    boolean writingPath = false;
     private Unit player;
 
     public PlayerController(Unit player){
@@ -58,11 +58,12 @@ public class PlayerController extends InputListener{
     @Override
     public void touchDragged(InputEvent event, float x, float y, int pointer) {
         player.control.addAction(NONE, x, y);
-        Vector2 lastPos = draggedPoss.get(draggedPoss.size-1);
-
-        float epsilon = 0.01f;
-        if( lastPos.dst2(x,y) > epsilon){
-            draggedPoss.add(new Vector2(x, y));
+        if (writingPath) {
+            Vector2 lastPos = draggedPoss.get(draggedPoss.size-1);
+            float epsilon = 0.01f;
+            if(lastPos.dst2(x,y) > epsilon){
+                draggedPoss.add(new Vector2(x, y));
+            }
         }
         super.touchDragged(event, x, y, pointer);
     }
@@ -75,23 +76,58 @@ public class PlayerController extends InputListener{
         return super.mouseMoved(event, x, y);
     }
 
+    int mouseAction = 0;
     @Override
     public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-        if(mouseBind.containsKey(button))
-            player.control.removeAction(mouseBind.get(button));
-        draggedPoss.add(player.getBody().getPosition().cpy());
-        draggedPoss.add(new Vector2(x, y));
+//        if(mouseBind.containsKey(button))
+//            player.control.removeAction(mouseBind.get(button));
+        player.control.addAction(NONE, x, y);
+
+        if(player.getBody().getPosition().dst(x, y) < radiusToMove){
+            writingPath = true;
+            mouseAction = FOLLOW_DIRECTION;
+            player.control.removeAction(mouseAction);
+
+            draggedPoss.add(player.getBody().getPosition().cpy());
+            draggedPoss.add(new Vector2(x, y));
+        }else{
+            mouseAction = FIRE;
+            player.control.addAction(mouseAction);
+            player.level.setTimeSpeed(1f);
+        }
+
 
         return mouseBind.containsKey(button);
     }
+    float slowedTimeSpeed = 0.1f;
 
+    float radiusToMove = 1.2f;
     @Override
     public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-        if(mouseBind.containsKey(button))
-            player.control.addAction(mouseBind.get(button), x, y);
+//        if(mouseBind.containsKey(button))
+//            player.control.addAction(mouseBind.get(button), x, y);
+        writingPath = false;
+        if(mouseAction == FIRE) {
+            player.control.removeAction(mouseAction);
+            player.level.setTimeSpeed(slowedTimeSpeed);
+        }
+        if(mouseAction == FOLLOW_PATH) {
+            player.control.addAction(mouseAction);
+            player.control.path = new SimplePath(draggedPoss);
+            draggedPoss.clear();
+        }
+        if(mouseAction == FOLLOW_DIRECTION){
+            player.level.setTimeSpeed(1);
+            player.control.direction.set(draggedPoss.get(draggedPoss.size-1).cpy().sub(draggedPoss.first()));
+            player.control.addAction(FOLLOW_DIRECTION);
 
-        player.control.path = new SimplePath(draggedPoss);
-        draggedPoss.clear();
+            player.control.addAction(mouseAction);
+            player.control.path = new SimplePath(draggedPoss);
+            draggedPoss.clear();
+
+        }
+        player.control.addAction(NONE, x, y);
+
         super.touchUp(event, x, y, pointer, button);
     }
 }

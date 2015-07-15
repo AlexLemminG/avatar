@@ -51,7 +51,6 @@ public class Door extends GObject{
 //        staticBody.setTransform(0, -1, 0);
         j = (RevoluteJoint) world.createJoint(jDef);
         body.getFixtureList().first().setFilterData(Wall.wallFilter);
-//        body.getFixtureList().get(1).setFilterData(Wall.wallFilter);
         return body;
     }
 }

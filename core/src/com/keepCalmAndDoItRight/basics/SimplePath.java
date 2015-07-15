@@ -63,4 +63,13 @@ public class SimplePath implements Path<Vector2> {
     public float approxLength(int samples) {
         return length;
     }
+
+    public float[] getVertices() {
+        float[] result = new float[points.length * 2];
+        for(int i = 0; i < points.length; i++){
+            result[i * 2] = points[i].x;
+            result[i * 2 + 1] = points[i].y;
+        }
+        return result;
+    }
 }

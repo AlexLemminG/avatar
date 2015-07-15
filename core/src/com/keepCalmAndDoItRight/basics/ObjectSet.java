@@ -1,5 +1,6 @@
 package com.keepCalmAndDoItRight.basics;
 
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Array;
 
 import java.util.LinkedList;
@@ -14,6 +15,7 @@ public class ObjectSet {
     public Array<GObject> allGObjects;
     List<GObject> others;
     List<GObject> toAdd;
+    List<GObject> toRemoveBody;
 
     public ObjectSet(Level level){
         this.level = level;
@@ -22,6 +24,7 @@ public class ObjectSet {
         toRemove = new LinkedList<GObject>();
         toAdd = new LinkedList<GObject>();
         allGObjects = new Array<GObject>();
+        toRemoveBody = new LinkedList<GObject>();
     }
 
     public void put(GObject o){
@@ -37,14 +40,18 @@ public class ObjectSet {
     }
 
     public void actuallyRemove(GObject o){
-        if(o.hasBody){
-            level.world.destroyBody(o.getBody());
-            o.setBody(null);
-        }
+        actuallyRemoveBody(o);
         if(o.actor != null){
             level.stage.getActors().removeValue(o.actor, true);
         }
         allGObjects.removeValue(o, true);
+    }
+
+    private void actuallyRemoveBody(GObject o) {
+        if(o.hasBody){
+            level.world.destroyBody(o.getBody());
+            o.setBody(null);
+        }
     }
 
     public void update(float dt){
@@ -52,6 +59,11 @@ public class ObjectSet {
         for(GObject u : allGObjects){
             u.update(dt);
         }
+
+        actuallyPutAndRemoveAll();
+    }
+
+    public void actuallyPutAndRemoveAll(){
         for(GObject r : toAdd){
             actuallyPut(r);
         }
@@ -62,6 +74,10 @@ public class ObjectSet {
         }
         toRemove.clear();
 
+        for(GObject r : toRemoveBody){
+            actuallyRemoveBody(r);
+        }
+        toRemoveBody.clear();
     }
 
     public void dispose() {
@@ -70,9 +86,13 @@ public class ObjectSet {
         }
     }
 
-//    public void render(ShapeRenderer sr) {
-//        for(GObject sd : allGObjects){
-//            sd.render(sr);
-//        }
-//    }
+    public void drawDebug(ShapeRenderer sr) {
+        for(GObject u : allGObjects){
+            u.debugRender(sr);
+        }
+    }
+
+    public void removeBody(GObject gObject) {
+        toRemoveBody.add(gObject);
+    }
 }

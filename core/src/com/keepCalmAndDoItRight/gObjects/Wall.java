@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.keepCalmAndDoItRight.basics.Assets;
 import com.keepCalmAndDoItRight.basics.GObject;
 import com.keepCalmAndDoItRight.basics.Level;
+import com.keepCalmAndDoItRight.quick.Consts;
 import com.keepCalmAndDoItRight.quick.GrUtils;
 import com.keepCalmAndDoItRight.quick.ShapesCreator;
 
@@ -17,17 +18,9 @@ import com.keepCalmAndDoItRight.quick.ShapesCreator;
  */
 public class Wall extends GObject{
 
-    public static Filter wallFilter = new Filter();
-    static{
-        wallFilter.categoryBits = 0b0010;
-        wallFilter.maskBits = 0b1101;
-        wallFilter.groupIndex = 0;
-    }
-
-
-//    private Polygon basisPolygon;
-    private float wallWidth;
-    private boolean circled;
+    public static Filter wallFilter = Consts.WALL_FILTER;
+    public float wallWidth;
+    public boolean circled;
 
     public Wall(Level level, Polygon basisPolygon, float wallWidth, boolean circled) {
         super(level, basisPolygon);
@@ -51,14 +44,13 @@ public class Wall extends GObject{
     }
 
     public static class WallSegment extends GObject{
-
         public WallSegment(Level level, Polygon polygon) {
             super(level, polygon);
             setTexture(Assets.WALL_TEXTURE);
             init();
             getBody().setType(BodyDef.BodyType.StaticBody);
             getBody().getFixtureList().first().setFilterData(wallFilter);
-//            getBody().getFixtureList().get(1).setFilterData(wallFilter);
+//            getBody().getFixtureList().get(1).setFilterData(WALL_FILTER);
         }
 
         @Override

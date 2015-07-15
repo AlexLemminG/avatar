@@ -2,17 +2,19 @@ package com.keepCalmAndDoItRight.basics;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.PolygonRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.joints.FrictionJoint;
 import com.badlogic.gdx.physics.box2d.joints.FrictionJointDef;
-import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.ShortArray;
-import com.keepCalmAndDoItRight.GeometryUtils;
+import com.keepCalmAndDoItRight.gObjects.Item;
+import com.keepCalmAndDoItRight.quick.GeometryUtils;
 import com.keepCalmAndDoItRight.quick.GrUtils;
 
 /**
@@ -27,7 +29,7 @@ public class GObject implements Disposable{
 
     protected Texture texture;
     protected Body body;
-    protected Actor actor;
+    protected Group actor;
     public Level level;
 
     public GObject(Level level, Polygon polygon) {
@@ -35,7 +37,7 @@ public class GObject implements Disposable{
         setPolygon(polygon);
     }
 
-    public void init(){
+    public final void init(){
         if(polygon == null) createPolygon();
         if(body == null) createBody(level.world);
         hasBody = getBody() != null;
@@ -47,6 +49,31 @@ public class GObject implements Disposable{
 
     public PolygonRegion getPolygonRegion() {
         return polygonRegion;
+    }
+
+    public void setPosition(Vector2 position) {
+        if(hasBody)
+            getBody().setTransform(position, getBody().getAngle());
+        else
+            getActor().setPosition(position.x, position.y);
+    }
+
+    public void setPosition(float x, float y) {
+        if(hasBody)
+            getBody().setTransform(x, y, getBody().getAngle());
+        else
+            getActor().setPosition(x, y);
+
+    }
+
+    Vector2 tempVec2 = new Vector2();
+
+    public Vector2 getPosition(){
+        if(hasBody)
+            return getBody().getPosition();
+        else {
+            return getActor().localToStageCoordinates(tempVec2.set(0, 0));
+        }
     }
 
     protected PolygonRegion polygonRegion;
@@ -62,13 +89,18 @@ public class GObject implements Disposable{
         if (body == null)
             hasBody = false;
     }
-    public Actor getActor() {
+    public Group getActor() {
         return actor;
     }
-    public void setActor(Actor actor) {
+    public void setActor(Group actor) {
         this.actor = actor;
     }
 
+    public void destroyBody(){
+        if(getBody() != null)
+        getBody().getWorld().destroyBody(getBody());
+        setBody(null);
+    }
 
     public GObject(Level level){
         this.level = level;
@@ -112,7 +144,7 @@ public class GObject implements Disposable{
                 fDef.shape = p;
                 fDef.isSensor = false;
                 fDef.density = 1f;
-                body.createFixture(fDef);
+                body.createFixture(fDef).setUserData(this);
             }
         }else{
             FixtureDef fDef = new FixtureDef();
@@ -120,7 +152,7 @@ public class GObject implements Disposable{
             fDef.shape = p;
             fDef.isSensor = false;
             fDef.density = 1f;
-            body.createFixture(fDef);
+            body.createFixture(fDef).setUserData(this);
         }
         body.setUserData(this);
         FrictionJointDef f = new FrictionJointDef();
@@ -153,12 +185,12 @@ public class GObject implements Disposable{
         return polygonRegion;
     }
 
-    public Actor createActor(Stage stage){
-        Actor actor;
+    public Group createActor(Stage stage){
+        Group actor;
         if(polygonRegion != null)
             actor = new ActorWithPolygonRegion(polygonRegion);
         else{
-            actor = new Actor();
+            actor = new Group();
         }
         if(!hasBody)
             actor.setOrigin(Align.center);
@@ -174,6 +206,7 @@ public class GObject implements Disposable{
         }
         stage.addActor(actor);
         setActor(actor);
+        actor.setName(getClass().getSimpleName());
         return actor;
     }
 
@@ -208,6 +241,9 @@ public class GObject implements Disposable{
 
         setBody(body);
         return body;
+    }
+
+    public void debugRender(ShapeRenderer sr){
 
     }
 }
